@@ -6,7 +6,7 @@ dependencies {
 
     testImplementation 'com.github.tomakehurst:wiremock-jre8:2.26.3'
 
-    testImplementation platform('software.amazon.awssdk:bom:2.13.24')
+    testImplementation platform('software.amazon.awssdk:bom:2.13.26')
     testImplementation 'software.amazon.awssdk:iam'
     testImplementation 'software.amazon.awssdk:lambda'
     testImplementation 'software.amazon.awssdk:s3'
