@@ -15,7 +15,7 @@
     "color-namer": "1.4.0",
     "fast-check": "1.25.1",
     "jest": "26.1.0",
-    "nock": "13.0.1"
+    "nock": "13.0.2"
   },
   "scripts": {
     "jest": "jest src/*.spec.js",
