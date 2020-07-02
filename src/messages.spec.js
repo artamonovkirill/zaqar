@@ -1,5 +1,5 @@
-const messages = require('./messages')
 const fc = require('fast-check')
+const messages = require('./messages')
 
 describe('Messages', () => {
     test.each(['error', 'info'])('%s message are random', level => {

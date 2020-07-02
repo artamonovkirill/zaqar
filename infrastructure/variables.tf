@@ -7,11 +7,18 @@ variable "tags" {
 variable "slack_hook" {
   type = string
   description = "Slack hook (https://hooks.slack.com/services/AAAAAAAAA/AAAAAAAAA/AAAAAAAAAAAAAAAAAAAAAAAA)"
+  default = ""
 
   validation {
-    condition     = can(regex("^http(s)?://[a-z.]+(:[0-9]+)?(/[a-zA-Z0-9]+)+", var.slack_hook))
+    condition     = var.slack_hook == "" || can(regex("^http(s)?://[a-z.]+(:[0-9]+)?(/[a-zA-Z0-9]+)+", var.slack_hook))
     error_message = "Slack hook must be a valid URL."
   }
+}
+
+variable "kms_encrypted_slack_hook" {
+  type = string
+  description = "KMS-encrypted Slack hook."
+  default = ""
 }
 
 variable "region" {

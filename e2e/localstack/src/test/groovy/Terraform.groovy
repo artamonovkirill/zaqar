@@ -35,6 +35,7 @@ provider "aws" {
     lambda = "${localstack.endpoint}"
     cloudwatchlogs = "${localstack.endpoint}"
     s3 = "${localstack.endpoint}"
+    kms = "${localstack.endpoint}"
   }
   
   region = "eu-west-1"

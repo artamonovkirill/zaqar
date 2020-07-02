@@ -3,6 +3,7 @@ import software.amazon.awssdk.core.SdkBytes
 import software.amazon.awssdk.services.cloudwatchlogs.CloudWatchLogsClient
 import software.amazon.awssdk.services.cloudwatchlogs.model.OutputLogEvent
 import software.amazon.awssdk.services.iam.IamClient
+import software.amazon.awssdk.services.kms.KmsClient
 import software.amazon.awssdk.services.lambda.LambdaClient
 import software.amazon.awssdk.services.lambda.model.LambdaException
 import software.amazon.awssdk.services.s3.S3Client
@@ -18,6 +19,7 @@ class ModuleSpec extends Specification {
     LambdaClient lambda
     IamClient iam
     CloudWatchLogsClient cloudWatchLogs
+    KmsClient kms
 
     def setup() {
         localstack.start()
@@ -31,6 +33,7 @@ class ModuleSpec extends Specification {
         lambda = AWS.lambda(localstack)
         iam = AWS.iam(localstack)
         cloudWatchLogs = AWS.cloudWatchLogs(localstack)
+        kms = AWS.kms(localstack)
     }
 
     def 'a user can invoke the lambda function'() {
@@ -126,7 +129,7 @@ class ModuleSpec extends Specification {
         apply.error.contains 'Slack hook must be a valid URL.'
     }
 
-    def 'a user can configure Slack notification username'() {
+    def 'Slack notification username is configurable'() {
         given:
         def variables = [slack_hook: 'https://httpbin.org/post',
                          name      : 'Geronimo',
@@ -155,7 +158,7 @@ class ModuleSpec extends Specification {
         }
     }
 
-    def 'a user can configure Slack notification avatar'() {
+    def 'Slack notification avatar is configurable'() {
         given:
         def variables = [slack_hook: 'https://httpbin.org/post',
                          avatar_url: 'https://google.be',
@@ -184,7 +187,7 @@ class ModuleSpec extends Specification {
         }
     }
 
-    def 'Avatar URL must be a valid URL'() {
+    def 'avatar URL must be a valid URL'() {
         given:
         def variables = [slack_hook: 'https://httpbin.org/post',
                          avatar_url: 'foo',
@@ -200,7 +203,7 @@ class ModuleSpec extends Specification {
         apply.error.contains 'Avatar URL must be a valid URL.'
     }
 
-    def 'Only eu-west-1 region is supported at the moment'() {
+    def 'only eu-west-1 region is supported at the moment'() {
         given:
         def variables = [slack_hook: 'https://httpbin.org/post',
                          region    : 'us-east-1']
@@ -213,6 +216,39 @@ class ModuleSpec extends Specification {
         then:
         apply.exitValue != 0
         apply.error.contains 'Only eu-west-1 region is supported at the moment.'
+    }
+
+    def 'KMS-encrypted Slack hooks are supported'() {
+        given:
+        def keyId = kms.createKey().keyMetadata().keyId()
+        def plaintext = SdkBytes.fromUtf8String('https://httpbin.org/post')
+        def encryptedHook = Base64.encode(kms.encrypt(r -> r.keyId(keyId).plaintext(plaintext)).ciphertextBlob())
+        and:
+        def variables = [kms_encrypted_slack_hook: encryptedHook,
+                         aws_kms_endpoint        : 'http://localstack:4566',
+                         region                  : 'eu-west-1']
+        Terraform.Module.generate(variables, tmp)
+        Terraform.init()
+        and:
+        def payload = SdkBytes.fromUtf8String('{"details": {"project": "Ninshubur"}}')
+
+        when:
+        def apply = Terraform.apply()
+
+        then:
+        apply.exitValue == 0
+
+        when:
+        def result = lambda.invoke { it.functionName('ninshubur').payload(payload) }
+
+        then:
+        result.statusCode() == 200
+        !result.functionError()
+        result.payload().asUtf8String() =~ 'Successfully notified'
+        and:
+        new PollingConditions(timeout: 10).eventually {
+            cloudWatchLogs('/aws/lambda/ninshubur').find { it.message() =~ 'Slack API responded with 200' }
+        }
     }
 
     def cleanup() {

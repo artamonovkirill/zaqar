@@ -1,19 +1,28 @@
+import org.testcontainers.containers.GenericContainer
+import org.testcontainers.containers.Network
+import org.testcontainers.containers.wait.strategy.Wait
 
-
-import org.testcontainers.containers.localstack.LocalStackContainer
-
-import static org.testcontainers.containers.localstack.LocalStackContainer.Service.IAM
-import static org.testcontainers.containers.localstack.LocalStackContainer.Service.LAMBDA
-import static org.testcontainers.containers.localstack.LocalStackContainer.Service.S3
+import static org.testcontainers.containers.Network.newNetwork
 
 class LocalStack {
-    final LocalStackContainer container
+    final GenericContainer container
+    final accessKey = 'foo'
+    final secretKey = 'bar'
+    final region = 'eu-west-1'
+    final network = newNetwork()
 
     LocalStack() {
-        container = new LocalStackContainer('0.11.2')
-                .withServices(S3, IAM, LAMBDA)
+        container = new GenericContainer('localstack/localstack:0.11.2')
+                .withEnv(
+                        SERVICES: 'kms,s3,lambda,iam',
+                        DEFAULT_REGION: region,
+                        LAMBDA_EXECUTOR: 'docker',
+                        LAMBDA_DOCKER_NETWORK: network.id)
+                .withNetwork(network)
+                .withNetworkAliases('localstack')
                 .withExposedPorts(4566)
-                .withEnv(DEFAULT_REGION: 'eu-west-1')
+                .waitingFor(Wait.forLogMessage(/.*Ready[.].*/, 1))
+        container.withFileSystemBind('//var/run/docker.sock', '/var/run/docker.sock')
     }
 
     def start() {
@@ -22,14 +31,7 @@ class LocalStack {
 
     def stop() {
         container.stop()
-    }
-
-    def getAccessKey() {
-        container.accessKey
-    }
-
-    def getSecretKey() {
-        container.secretKey
+        network.close()
     }
 
     URI getEndpoint() {

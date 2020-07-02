@@ -1,14 +1,24 @@
-const index = require('./index')
-const messages = require('./messages')
 const colors = require('./colors')
+const index = require('./index')
+const kms = require('./kms')
+const messages = require('./messages')
+
+const localstack = require('./localstack.test')
 
 const nock = require('nock')
 const color_names = require('color-namer')
 
 beforeEach(() => {
     delete process.env.SLACK_HOOK
+    delete process.env.KMS_ENCRYPTED_SLACK_HOOK
     delete process.env.NAME
+    delete process.env.AVATAR_URL
+    delete process.env.AWS_REGION
+    delete process.env.AWS_KMS_ENDPOINT
+    jest.setTimeout(500)
 })
+
+afterEach(async () => localstack.stop())
 
 describe('Main', () => {
     it('performs a call to Slack API', async () => {
@@ -352,6 +362,28 @@ describe('Configuration', () => {
                         }
                     })
                 .reply(200)
+            const event = {details: {Project: 'Ninshubur'}}
+
+            await expect(index.handler(event)).resolves.toBeTruthy()
+        })
+    })
+
+    describe('Hook', () => {
+        it('a user can provide a KMS-encrypted Slack hook', async () => {
+            await localstack.start()
+            const keyId = await kms.createKey()
+            process.env.KMS_ENCRYPTED_SLACK_HOOK = await kms.encrypt('https://hooks.slack.com/hook', keyId)
+
+            nock('https://hooks.slack.com')
+                .post('/hook',
+                    _ => true,
+                    {
+                        reqheaders: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                .reply(200)
+
             const event = {details: {Project: 'Ninshubur'}}
 
             await expect(index.handler(event)).resolves.toBeTruthy()

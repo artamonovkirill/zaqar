@@ -9,9 +9,8 @@ function that allows you to post [Slack](https://slack.com/) notifications
 
 This is still work in progress.
 
-TODO:
+Backlog:
 * MVP:
-  * KMS-encrypted hooks
   * Usage documentation
 * Next milestone:
   * user mentions

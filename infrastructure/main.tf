@@ -74,8 +74,11 @@ resource "aws_lambda_function" "_" {
   environment {
     variables = {
       SLACK_HOOK = var.slack_hook
+      KMS_ENCRYPTED_SLACK_HOOK = var.kms_encrypted_slack_hook
       NAME = var.name
       AVATAR_URL = var.avatar_url
+      AWS_REGION = var.region
+      AWS_KMS_ENDPOINT = var.aws_kms_endpoint
     }
   }
 
@@ -88,4 +91,10 @@ variable "s3_object_versions" {
   default = {
     eu-west-1: "srIypFDvF_clxSGSCi9Q87xYRYRdd9eC"
   }
+}
+
+variable "aws_kms_endpoint" {
+  type = string
+  description = "This variable is for tests only, it should not be set to anything but default"
+  default = ""
 }
