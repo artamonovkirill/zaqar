@@ -14,7 +14,7 @@
   "devDependencies": {
     "@types/jest": "26.0.7",
     "color-namer": "1.4.0",
-    "fast-check": "1.26.0",
+    "fast-check": "2.0.0",
     "jest": "26.1.0",
     "nock": "13.0.2",
     "testcontainers": "3.2.0"
