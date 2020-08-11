@@ -11,7 +11,8 @@ class LocalStack {
     final network = newNetwork()
 
     LocalStack() {
-        container = new GenericContainer('localstack/localstack:0.11.3')
+        // TODO switch to a released version once https://github.com/localstack/localstack/pull/2829/files is released
+        container = new GenericContainer('localstack/localstack:latest')
                 .withEnv(
                         SERVICES: 'kms,s3,lambda,iam',
                         DEFAULT_REGION: region,
