@@ -2,7 +2,7 @@ dependencies {
     testImplementation 'org.spockframework:spock-core:2.0-M3-groovy-3.0'
 
     testImplementation 'org.testcontainers:localstack:1.14.3'
-    testImplementation 'com.amazonaws:aws-java-sdk:1.11.840'
+    testImplementation 'com.amazonaws:aws-java-sdk:1.11.841'
 
     testImplementation platform('software.amazon.awssdk:bom:2.13.75')
     testImplementation 'software.amazon.awssdk:cloudwatchlogs'
