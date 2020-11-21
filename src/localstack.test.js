@@ -17,7 +17,7 @@ exports.start = async () => {
 
     process.env.AWS_ACCESS_KEY_ID = 'foo'
     process.env.AWS_SECRET_ACCESS_KEY = 'bar'
-    process.env.AWS_KMS_ENDPOINT = `http://${container.getContainerIpAddress()}:${container.getMappedPort(4566)}`
+    process.env.AWS_KMS_ENDPOINT = `http://${container.getHost()}:${container.getMappedPort(4566)}`
 }
 
 exports.stop = async () => {
