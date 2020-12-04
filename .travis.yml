@@ -9,7 +9,7 @@ jobs:
   - stage: e2e
     language: java
     node_js: node
-    jdk: openjdk14
+    jdk: openjdk15
     services: docker
     env:
       - PATH=$PATH:$HOME/tools
