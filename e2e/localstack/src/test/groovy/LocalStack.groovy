@@ -12,7 +12,7 @@ class LocalStack {
     final network = newNetwork()
 
     LocalStack() {
-        container = new GenericContainer('localstack/localstack-light:0.12.2')
+        container = new GenericContainer('localstack/localstack-light:0.12.3')
                 .withEnv(
                         SERVICES: 'kms,s3,lambda,iam',
                         DEFAULT_REGION: region,
