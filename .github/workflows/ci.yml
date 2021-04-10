@@ -48,5 +48,5 @@ jobs:
           aws-access-key-id: AKIA5I2GO2UBJH5ZOIEL
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-west-1
-      - run: aws s3 cp archive/lambda.zip s3://ninshubur-eu-west-1/lambda.zip --acl public_read
+      - run: aws s3 cp archive/lambda.zip s3://ninshubur-eu-west-1/lambda.zip --acl public-read
 
