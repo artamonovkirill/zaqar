@@ -9,10 +9,9 @@
   },
   "dependencies": {
     "aws-sdk": "2.907.0",
-    "node-fetch": "2.6.1",
-
+    "hosted-git-info": "4.0.2",
     "lodash": "4.17.21",
-    "hosted-git-info": "4.0.2"
+    "node-fetch": "2.6.1"
   },
   "devDependencies": {
     "@types/jest": "26.0.23",
