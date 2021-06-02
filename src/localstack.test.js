@@ -5,8 +5,6 @@ let container
 exports.start = async () => {
     if (container) return container
 
-    jest.setTimeout(120000)
-
     process.env.AWS_REGION = 'us-east-1'
 
     container = await new GenericContainer('localstack/localstack-light', '0.12.2')
