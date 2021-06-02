@@ -15,7 +15,6 @@ beforeEach(() => {
     delete process.env.AVATAR_URL
     delete process.env.AWS_REGION
     delete process.env.AWS_KMS_ENDPOINT
-    jest.setTimeout(500)
 })
 
 afterEach(async () => localstack.stop())
@@ -387,7 +386,7 @@ describe('Configuration', () => {
             const event = {details: {Project: 'Ninshubur'}}
 
             await expect(index.handler(event)).resolves.toBeTruthy()
-        })
+        }, 25000)
     })
 })
 
