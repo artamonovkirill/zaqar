@@ -6,7 +6,7 @@ let keyId
 beforeAll(async () => {
     await localstack.start()
     keyId = await kms.createKey()
-}, 25000)
+}, 50000)
 
 describe('KMS', () => {
     it('decryption is the reverse of encryption', () => {
