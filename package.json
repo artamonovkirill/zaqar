@@ -9,8 +9,6 @@
   },
   "dependencies": {
     "aws-sdk": "2.919.0",
-    "hosted-git-info": "4.0.2",
-    "lodash": "4.17.21",
     "node-fetch": "2.6.1"
   },
   "devDependencies": {
