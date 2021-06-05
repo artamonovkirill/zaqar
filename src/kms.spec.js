@@ -24,4 +24,4 @@ describe('KMS', () => {
     })
 })
 
-afterAll(async () => localstack.stop())
+afterAll(async () => await localstack.stop())

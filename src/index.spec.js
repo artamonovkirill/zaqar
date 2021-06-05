@@ -17,7 +17,7 @@ beforeEach(() => {
     delete process.env.AWS_KMS_ENDPOINT
 })
 
-afterEach(async () => localstack.stop())
+afterEach(async () => await localstack.stop())
 
 describe('Main', () => {
     it('performs a call to Slack API', async () => {
